@@ -68,6 +68,10 @@ function startCountdown() {
   countdownText.style.visibility = "visible";
   timerSound.play();
 
+  // إعادة صور الإيماءات إلى "Nothing" عند بدء الجولة
+  playerGesture.src = "/static/nothing.png";
+  cpuGesture.src = "/static/nothing.png";
+
   const countdownInterval = setInterval(() => {
     count -= 1;
     if (count > 0) {
@@ -99,6 +103,7 @@ async function startGame() {
 
     // تحديث صور الإيماءات والنتائج
     cpuGesture.src = `/static/${data.cpu_choice.toLowerCase()}.png`;
+    playerGesture.src = `/static/${data.player_choice.toLowerCase()}.png`;
     winnerText.textContent = `Winner: ${data.winner}`;
 
     // تشغيل الصوت بناءً على النتيجة
@@ -110,8 +115,14 @@ async function startGame() {
       tieSound.play();
     }
 
-    // تحديث النقاط باستخدام الدالة الجديدة
+    // تحديث النقاط
     updateScores(data.player_score, data.cpu_score);
+
+    // إعادة الإيماءات إلى "Nothing" بعد 3 ثوانٍ
+    setTimeout(() => {
+      playerGesture.src = "/static/nothing.png";
+      cpuGesture.src = "/static/nothing.png";
+    }, 3000);
   } catch (error) {
     console.error("Error in startGame:", error);
   }

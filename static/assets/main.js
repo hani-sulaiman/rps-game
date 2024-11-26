@@ -2,22 +2,18 @@ const camera = document.getElementById("camera");
 const playerGesture = document
   .getElementById("player-gesture")
   .querySelector("img");
-const cpuGesture = document
-  .getElementById("cpu-gesture")
-  .querySelector("img");
+const cpuGesture = document.getElementById("cpu-gesture").querySelector("img");
 const winnerText = document.getElementById("winner");
 const scoreText = document.getElementById("score");
 const countdownText = document.getElementById("countdown");
 const startButton = document.getElementById("start");
 const resetButton = document.getElementById("reset");
 
-// أصوات اللعبة
 const timerSound = document.getElementById("timer-sound");
 const winSound = document.getElementById("win-sound");
 const loseSound = document.getElementById("lose-sound");
 const tieSound = document.getElementById("tie-sound");
 
-// تشغيل الكاميرا
 navigator.mediaDevices
   .getUserMedia({ video: true })
   .then((stream) => {
@@ -27,8 +23,8 @@ navigator.mediaDevices
     console.error("Error accessing the camera:", error);
   });
 
-// إرسال إطار الكاميرا إلى الخادم
 async function sendFrame() {
+
   const canvas = document.createElement("canvas");
   canvas.width = camera.videoWidth;
   canvas.height = camera.videoHeight;
@@ -58,17 +54,23 @@ async function sendFrame() {
   }, "image/jpeg");
 }
 
-// تحديث إيماءة اللاعب بشكل دائم
+
+setInterval(()=>{
+  const dotter = document.querySelector(".dotter");
+  dotter.classList.add("show");
+  setTimeout(() => {
+    dotter.classList.remove("show");
+  }, 1000);
+},2000)
+
 setInterval(sendFrame, 1000);
 
-// العد التنازلي وبدء اللعبة
 function startCountdown() {
   let count = 3;
   countdownText.textContent = count;
   countdownText.style.visibility = "visible";
   timerSound.play();
 
-  // إعادة صور الإيماءات إلى "Nothing" عند بدء الجولة
   playerGesture.src = "/static/nothing.png";
   cpuGesture.src = "/static/nothing.png";
 
@@ -80,13 +82,11 @@ function startCountdown() {
       clearInterval(countdownInterval);
       countdownText.style.visibility = "hidden";
 
-      // بدء اللعبة بعد انتهاء العداد التنازلي
       startGame();
     }
   }, 1000);
 }
 
-// بدء اللعبة
 async function startGame() {
   try {
     const response = await fetch("/start_game", {
@@ -101,12 +101,10 @@ async function startGame() {
 
     const data = await response.json();
 
-    // تحديث صور الإيماءات والنتائج
     cpuGesture.src = `/static/${data.cpu_choice.toLowerCase()}.png`;
     playerGesture.src = `/static/${data.player_choice.toLowerCase()}.png`;
     winnerText.textContent = `Winner: ${data.winner}`;
 
-    // تشغيل الصوت بناءً على النتيجة
     if (data.winner === "You win!") {
       winSound.play();
     } else if (data.winner === "CPU wins!") {
@@ -115,10 +113,7 @@ async function startGame() {
       tieSound.play();
     }
 
-    // تحديث النقاط
     updateScores(data.player_score, data.cpu_score);
-
-    // إعادة الإيماءات إلى "Nothing" بعد 3 ثوانٍ
     setTimeout(() => {
       playerGesture.src = "/static/nothing.png";
       cpuGesture.src = "/static/nothing.png";
@@ -128,13 +123,11 @@ async function startGame() {
   }
 }
 
-// تحديث النقاط عند انتهاء اللعبة
 function updateScores(playerPoints, cpuPoints) {
   document.getElementById("player-score").textContent = playerPoints;
   document.getElementById("cpu-score").textContent = cpuPoints;
 }
 
-// إعادة تعيين اللعبة
 resetButton.addEventListener("click", async () => {
   try {
     const response = await fetch("/reset_game", { method: "POST" });
@@ -145,17 +138,14 @@ resetButton.addEventListener("click", async () => {
 
     const data = await response.json();
 
-    // إعادة تعيين الصور والنصوص
     playerGesture.src = "/static/rock.png";
     cpuGesture.src = "/static/rock.png";
     winnerText.textContent = "Winner: None";
 
-    // إعادة تعيين النقاط
     updateScores(0, 0);
   } catch (error) {
     console.error("Error in resetGame:", error);
   }
 });
 
-// زر بدء اللعبة
 startButton.addEventListener("click", startCountdown);

@@ -14,7 +14,23 @@ h1 {
   text-align: center;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
 }
-
+.dotter{
+  display: none;
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  background: red;
+  border-radius: 50%;
+  right: 10px;
+  top: 12px;
+  box-shadow: 0px 0px 4px red;
+}
+.dotter.show{
+  display: block;
+}
+.camera-container{
+  position: relative;
+}
 .container {
   display: flex;
   flex-wrap: wrap;

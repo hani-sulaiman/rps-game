@@ -32,13 +32,15 @@ def detect_gesture(image):
             ring_is_open = hand_landmarks.landmark[16].y < hand_landmarks.landmark[14].y
             pinky_is_open = hand_landmarks.landmark[20].y < hand_landmarks.landmark[18].y
 
+            # التأكد من قراءة الإيماءات بشكل صحيح
             if thumb_is_open and not index_is_open and not middle_is_open and not ring_is_open and not pinky_is_open:
                 return "Rock"
             elif index_is_open and middle_is_open and not ring_is_open and not pinky_is_open:
                 return "Scissors"
             elif index_is_open and middle_is_open and ring_is_open and pinky_is_open:
                 return "Paper"
-    return "Nothing"
+    return "Nothing"  # إذا لم يتم اكتشاف إيماءة
+
 
 
 @app.route('/')
@@ -65,14 +67,18 @@ def start_game():
     global cpu_choice, player_choice, winner, player_score, cpu_score
     cpu_choice = random.choice(cpu_choices)
 
+    # تحويل الإيماءات إلى حالة أحرف موحدة
+    player_choice_lower = player_choice.lower()
+    cpu_choice_lower = cpu_choice.lower()
+
     # حساب الفائز
-    if player_choice == "Nothing":
+    if player_choice_lower == "nothing":
         winner = "Invalid!"
-    elif player_choice == cpu_choice:
+    elif player_choice_lower == cpu_choice_lower:
         winner = "Tie!"
-    elif (player_choice == "Rock" and cpu_choice == "Scissors") or \
-         (player_choice == "Paper" and cpu_choice == "Rock") or \
-         (player_choice == "Scissors" and cpu_choice == "Paper"):
+    elif (player_choice_lower == "rock" and cpu_choice_lower == "scissors") or \
+         (player_choice_lower == "paper" and cpu_choice_lower == "rock") or \
+         (player_choice_lower == "scissors" and cpu_choice_lower == "paper"):
         winner = "You win!"
         player_score += 1
     else:

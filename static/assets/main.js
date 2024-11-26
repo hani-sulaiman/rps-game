@@ -59,7 +59,7 @@ async function sendFrame() {
 }
 
 // تحديث إيماءة اللاعب بشكل دائم
-setInterval(sendFrame, 1);
+setInterval(sendFrame, 1000);
 
 // العد التنازلي وبدء اللعبة
 function startCountdown() {
